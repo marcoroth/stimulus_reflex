@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "fileutils"
-require "stimulus_reflex/version"
 
 namespace :stimulus_reflex do
   desc "Install StimulusReflex in this application"
