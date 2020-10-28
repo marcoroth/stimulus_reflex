@@ -1,6 +1,6 @@
 {
   "name": "stimulus_reflex",
-  "version": "3.4.0-dev.0",
+  "version": "3.4.0-dev.1",
   "description": "Build reactive applications with the Rails tooling you already know and love.",
   "keywords": [
     "ruby",
@@ -41,7 +41,7 @@
     "dev": "microbundle watch"
   },
   "dependencies": {
-    "@stimulus_reflex/core": "^3.4.0-dev.0"
+    "@stimulus_reflex/core": "^3.4.0-dev.1"
   },
   "publishConfig": {
     "access": "public"
