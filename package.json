@@ -23,10 +23,6 @@
   "bugs": {
     "url": "https://github.com/hopsoft/stimulus_reflex/issues"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com:hopsoft/stimulus_reflex.git"
-  },
   "license": "MIT",
   "author": "Nathan Hopkins <natehop@gmail.com>",
   "source": "packages/stimulus_reflex/index.js",
