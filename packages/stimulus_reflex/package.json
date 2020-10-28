@@ -40,7 +40,8 @@
     "@stimulus_reflex/core": "^3.4.0-dev.3"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "registry": "https://npm.pkg.github.com/"
   },
   "devDependencies": {
     "@babel/core": "^7.12.3",
