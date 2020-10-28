@@ -42,7 +42,7 @@
     "prettier-standard:format": "lerna run --parallel prettier-standard:format",
     "test": "lerna run --parallel test",
     "dev": "lerna run --parallel dev",
-    "release": "lerna publish"
+    "release": "lerna publish prerelease -y"
   },
   "workspaces": [
     "packages/*",
