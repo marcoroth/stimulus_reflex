@@ -1,6 +1,6 @@
 {
   "name": "@stimulus_reflex/core",
-  "version": "3.4.0-dev.1",
+  "version": "3.4.0-dev.2",
   "description": "StimulusReflex: Core library",
   "keywords": [
     "ruby",
@@ -21,10 +21,6 @@
   "homepage": "https://docs.stimulusreflex.com/",
   "bugs": {
     "url": "https://github.com/hopsoft/stimulus_reflex/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com:hopsoft/stimulus_reflex.git"
   },
   "license": "MIT",
   "author": "Nathan Hopkins <natehop@gmail.com>",

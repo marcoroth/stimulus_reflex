@@ -1,6 +1,6 @@
 {
   "name": "stimulus_reflex",
-  "version": "3.4.0-dev.1",
+  "version": "3.4.0-dev.2",
   "description": "Build reactive applications with the Rails tooling you already know and love.",
   "keywords": [
     "ruby",
@@ -22,10 +22,6 @@
   "bugs": {
     "url": "https://github.com/hopsoft/stimulus_reflex/issues"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com:hopsoft/stimulus_reflex.git"
-  },
   "license": "MIT",
   "author": "Nathan Hopkins <natehop@gmail.com>",
   "source": "./index.js",
@@ -41,7 +37,7 @@
     "dev": "microbundle watch"
   },
   "dependencies": {
-    "@stimulus_reflex/core": "^3.4.0-dev.1"
+    "@stimulus_reflex/core": "^3.4.0-dev.2"
   },
   "publishConfig": {
     "access": "public"
