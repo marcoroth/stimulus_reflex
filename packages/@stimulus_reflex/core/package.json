@@ -1,6 +1,6 @@
 {
   "name": "@stimulus_reflex/core",
-  "version": "3.4.0-dev",
+  "version": "3.4.0-dev.0",
   "description": "StimulusReflex: Core library",
   "keywords": [
     "ruby",
