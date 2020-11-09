@@ -31,8 +31,10 @@ Gem::Specification.new do |gem|
   gem.add_dependency "rails", ">= 5.2"
   gem.add_dependency "redis"
 
+  gem.add_development_dependency "activesupport", [">= 5.0.0", "< 7.0"]
   gem.add_development_dependency "bundler", "~> 2.0"
   gem.add_development_dependency "cable_ready", ">= 4.3.0"
+  gem.add_development_dependency "minitest", ">= 5.6.0"
   gem.add_development_dependency "pry-nav"
   gem.add_development_dependency "pry"
   gem.add_development_dependency "rake"
