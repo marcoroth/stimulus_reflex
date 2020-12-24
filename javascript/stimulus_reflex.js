@@ -7,19 +7,21 @@ import { allReflexControllers } from './controllers'
 import { uuidv4, debounce, emitEvent, serializeForm } from './utils'
 import Log from './log'
 import Debug from './debug'
+import Application from './application'
 import {
   attributeValue,
   attributeValues,
   extractElementAttributes,
   extractElementDataset,
   findElement,
-  // A reference to the Stimulus application registered with: StimulusReflex.initialize
-  stimulusApplication
 } from './attributes'
 import { extractReflexName, elementToXPath, xPathToElement } from './utils'
 
 // A lambda that does nothing. Very zen; we are made of stars
 const NOOP = () => {}
+
+// A reference to the Stimulus application registered with: StimulusReflex.initialize
+let stimulusApplication
 
 // A reference to the ActionCable consumer registered with: StimulusReflex.initialize or getConsumer
 let actionCableConsumer
@@ -467,6 +469,7 @@ const initialize = (application, initializeOptions = {}) => {
   actionCableParams = params
   isolationMode = !!isolate
   stimulusApplication = application
+  Application.set(stimulusApplication)
   stimulusApplication.schema = { ...defaultSchema, ...application.schema }
   stimulusApplication.register(
     'stimulus-reflex',
