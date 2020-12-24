@@ -16,7 +16,10 @@ import Application from './application'
 // - element - the element that triggered the reflex (not necessarily the Stimulus controller's element)
 //
 const invokeLifecycleMethod = (stage, element, reflexId) => {
+  // console.log(stage)
   if (!element || !reflexes[reflexId]) return
+
+  // element.reflexData = {};
 
   if (Object.entries(element.reflexData).length === 0) {
     element.reflexData[reflexId] = reflexes[reflexId].promise.data
