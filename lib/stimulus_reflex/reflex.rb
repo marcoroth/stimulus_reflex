@@ -103,6 +103,14 @@ class StimulusReflex::Reflex
 
       req.env.merge(ActionDispatch::Http::Parameters::PARAMETERS_KEY => path_params)
       req.env["action_dispatch.request.parameters"] = req.parameters.merge(@params)
+
+      puts "@params #{@params.inspect}"
+      puts "path_params #{path_params.inspect}"
+      puts "req.parameters #{req.parameters.inspect}"
+      Rails.logger.debug("@params #{@params.inspect}")
+      Rails.logger.debug("path_params #{path_params.inspect}")
+      Rails.logger.debug("req.parameters #{req.parameters.inspect}")
+
       req.tap { |r| r.session.send :load! }
     end
   end
