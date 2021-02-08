@@ -8,44 +8,18 @@ require "active_model"
 require "active_record"
 require "action_controller"
 require "pry"
+require "rails/test_help"
+
 require_relative "../lib/stimulus_reflex"
+require_relative "../test/dummy/config/environment"
 
-class TestApp < Rails::Application
-  routes.draw { root to: "test#index" }
-end
+# Load support files
+Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].sort.each { |f| require f }
 
-class ApplicationController < ActionController::Base; end
+ActiveRecord::Migrator.migrations_paths = [File.expand_path("../test/dummy/db/migrate", __dir__)]
+ActiveRecord::Migrator.migrations_paths << File.expand_path("../db/migrate", __dir__)
 
-class TestController < ApplicationController
-  include Rails.application.routes.url_helpers
-
-  def index
-    head :ok
-  end
-end
-
-class SessionMock
-  def load!
-    nil
-  end
-end
-
-class ActionDispatch::Request
-  def session
-    @session ||= SessionMock.new
-  end
-end
-
-class TestModel
-  include ActiveModel::Model
-  attr_accessor :id
-  def is_a?(klass)
-    klass == ActiveRecord::Base
-  end
-end
-
-StimulusReflex.configuration.parent_channel = "ActionCable::Channel::Base"
-ActionCable::Server::Base.config.cable = {adapter: "test"}
+ActionCable::Server::Base.config.cable = { adapter: "test" }
 ActionCable::Server::Base.config.logger = Logger.new(nil)
 
 require_relative "../app/channels/stimulus_reflex/channel"

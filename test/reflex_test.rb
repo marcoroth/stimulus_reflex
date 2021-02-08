@@ -11,7 +11,6 @@ class StimulusReflex::ReflexTest < ActionCable::Channel::TestCase
       @env ||= {}
     end
     @reflex = StimulusReflex::Reflex.new(subscribe, url: "https://test.stimulusreflex.com")
-    @reflex.controller_class.view_paths << Rails.root.join("test/views")
   end
 
   test "render plain" do
@@ -19,11 +18,11 @@ class StimulusReflex::ReflexTest < ActionCable::Channel::TestCase
   end
 
   test "render template" do
-    assert @reflex.render("/hello_template", assigns: {message: "Testing 123"}) == "<p>Hello from template! Testing 123</p>\n"
+    assert @reflex.render("/hello_template", assigns: {message: "Testing 123"}).include? "<p>Hello from template! Testing 123</p>\n"
   end
 
   test "render partial" do
-    assert @reflex.render(partial: "/hello_partial", assigns: {message: "Testing 123"}) == "<p>Hello from partial! Testing 123</p>\n"
+    assert @reflex.render(partial: "/hello_partial", assigns: {message: "Testing 123"}).include? "<p>Hello from partial! Testing 123</p>\n"
   end
 
   test "dom_id" do

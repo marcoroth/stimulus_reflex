@@ -10,3 +10,6 @@ node_modules
 .vscode
 /javascript/dist
 *~
+*.sqlite3
+.byebug_history
+*.log
