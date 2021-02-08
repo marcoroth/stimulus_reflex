@@ -60,4 +60,4 @@ jobs:
         bundle config path vendor/bundle
         bundle install --jobs 4 --retry 3
     - name: Run ruby tests
-      run: bundle exec rake test_ruby
+      run: bundle exec rails test
