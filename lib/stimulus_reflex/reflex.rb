@@ -1,63 +1,44 @@
 # frozen_string_literal: true
 
+ClientAttributes = Struct.new(:reflex_id, :reflex_controller, :xpath_controller, :xpath_element, :permanent_attribute_name, keyword_init: true)
+
 class StimulusReflex::Reflex
   include ActiveSupport::Rescuable
-  include ActiveSupport::Callbacks
-  include CableReady::Broadcaster
+  include StimulusReflex::Callbacks
+  include ActionView::Helpers::TagHelper
 
-  define_callbacks :process, skip_after_callbacks_if_terminated: true
+  attr_reader :cable_ready, :channel, :url, :element, :selectors, :method_name, :broadcaster, :client_attributes, :logger
 
-  class << self
-    def before_reflex(*args, &block)
-      add_callback(:before, *args, &block)
-    end
-
-    def after_reflex(*args, &block)
-      add_callback(:after, *args, &block)
-    end
-
-    def around_reflex(*args, &block)
-      add_callback(:around, *args, &block)
-    end
-
-    private
-
-    def add_callback(kind, *args, &block)
-      options = args.extract_options!
-      options.assert_valid_keys :if, :unless, :only, :except
-      set_callback(*[:process, kind, args, normalize_callback_options!(options)].flatten, &block)
-    end
-
-    def normalize_callback_options!(options)
-      normalize_callback_option! options, :only, :if
-      normalize_callback_option! options, :except, :unless
-      options
-    end
-
-    def normalize_callback_option!(options, from, to)
-      if (from = options.delete(from))
-        from_set = Array(from).map(&:to_s).to_set
-        from = proc { |reflex| from_set.include? reflex.method_name }
-        options[to] = Array(options[to]).unshift(from)
-      end
-    end
-  end
-
-  attr_reader :channel, :url, :element, :selectors, :method_name, :broadcaster, :permanent_attribute_name
+  alias_method :action_name, :method_name # for compatibility with controller libraries like Pundit that expect an action name
 
   delegate :connection, :stream_name, to: :channel
-  delegate :session, to: :request
+  delegate :controller_class, :flash, :session, to: :request
   delegate :broadcast, :broadcast_message, to: :broadcaster
+  delegate :reflex_id, :reflex_controller, :xpath_controller, :xpath_element, :permanent_attribute_name, to: :client_attributes
+  delegate :render, to: :controller_class
 
-  def initialize(channel, url: nil, element: nil, selectors: [], method_name: nil, permanent_attribute_name: nil, params: {})
+  def initialize(channel, url: nil, element: nil, selectors: [], method_name: nil, params: {}, client_attributes: {})
+    if is_a? CableReady::Broadcaster
+      message = <<~MSG
+
+        #{self.class.name} includes CableReady::Broadcaster, and you need to remove it.
+        Reflexes have their own CableReady interface. You can just assume that it's present.
+        See https://docs.stimulusreflex.com/rtfm/cableready#using-cableready-inside-a-reflex-action for more details.
+
+      MSG
+      raise TypeError.new(message.strip)
+    end
+
     @channel = channel
     @url = url
     @element = element
     @selectors = selectors
     @method_name = method_name
     @params = params
-    @permanent_attribute_name = permanent_attribute_name
     @broadcaster = StimulusReflex::PageBroadcaster.new(self)
+    @logger = StimulusReflex::Logger.new(self)
+    @client_attributes = ClientAttributes.new(client_attributes)
+    @cable_ready = StimulusReflex::CableReadyChannels.new(stream_name)
     self.params
   end
 
@@ -66,28 +47,41 @@ class StimulusReflex::Reflex
       uri = URI.parse(url)
       path = ActionDispatch::Journey::Router::Utils.normalize_path(uri.path)
       query_hash = Rack::Utils.parse_nested_query(uri.query)
-      req = ActionDispatch::Request.new(
-        connection.env.merge(
-          Rack::MockRequest.env_for(uri.to_s).merge(
-            "rack.request.query_hash" => query_hash,
-            "rack.request.query_string" => uri.query,
-            "ORIGINAL_SCRIPT_NAME" => "",
-            "ORIGINAL_FULLPATH" => path,
-            Rack::SCRIPT_NAME => "",
-            Rack::PATH_INFO => path,
-            Rack::REQUEST_PATH => path,
-            Rack::QUERY_STRING => uri.query
-          )
-        )
+      mock_env = Rack::MockRequest.env_for(uri.to_s)
+
+      mock_env.merge!(
+        "rack.request.query_hash" => query_hash,
+        "rack.request.query_string" => uri.query,
+        "ORIGINAL_SCRIPT_NAME" => "",
+        "ORIGINAL_FULLPATH" => path,
+        Rack::SCRIPT_NAME => "",
+        Rack::PATH_INFO => path,
+        Rack::REQUEST_PATH => path,
+        Rack::QUERY_STRING => uri.query
       )
+
+      env = connection.env.merge(mock_env)
+
+      middleware = StimulusReflex.config.middleware
+
+      if middleware.any?
+        stack = middleware.build(Rails.application.routes)
+        stack.call(env)
+      end
+
+      req = ActionDispatch::Request.new(env)
+
       path_params = Rails.application.routes.recognize_path_with_request(req, url, req.env[:extras] || {})
+      path_params[:controller] = path_params[:controller].force_encoding("UTF-8")
+      path_params[:action] = path_params[:action].force_encoding("UTF-8")
+
       req.env.merge(ActionDispatch::Http::Parameters::PARAMETERS_KEY => path_params)
       req.env["action_dispatch.request.parameters"] = req.parameters.merge(@params)
       req.tap { |r| r.session.send :load! }
     end
   end
 
-  def morph(selectors, html = "")
+  def morph(selectors, html = nil)
     case selectors
     when :page
       raise StandardError.new("Cannot call :page morph after :#{broadcaster.to_sym} morph") unless broadcaster.page?
@@ -97,23 +91,19 @@ class StimulusReflex::Reflex
     else
       raise StandardError.new("Cannot call :selector morph after :nothing morph") if broadcaster.nothing?
       @broadcaster = StimulusReflex::SelectorBroadcaster.new(self) unless broadcaster.selector?
-      broadcaster.morphs << [selectors, html]
+      broadcaster.append_morph(selectors, html)
     end
   end
 
   def controller
     @controller ||= begin
-      request.controller_class.new.tap do |c|
+      controller_class.new.tap do |c|
         c.instance_variable_set :"@stimulus_reflex", true
         instance_variables.each { |name| c.instance_variable_set name, instance_variable_get(name) }
-        c.request = request
-        c.response = ActionDispatch::Response.new
+        c.set_request! request
+        c.set_response! controller_class.make_response!(request)
       end
     end
-  end
-
-  def url_params
-    @url_params ||= Rails.application.routes.recognize_path_with_request(request, request.path, request.env[:extras] || {})
   end
 
   def process(name, *args)
@@ -138,5 +128,24 @@ class StimulusReflex::Reflex
 
   def params
     @_params ||= ActionController::Parameters.new(request.parameters)
+  end
+
+  def dom_id(record, prefix = nil, hash: "#")
+    id = if record.is_a?(ActiveRecord::Relation)
+      [prefix, record.model_name.plural].compact.join("_")
+    elsif record.is_a?(ActiveRecord::Base)
+      ActionView::RecordIdentifier.dom_id(record, prefix).to_s
+    else
+      [prefix, record.to_s].compact.join("_")
+    end
+    (hash + id).squeeze("#")
+  end
+
+  # morphdom needs content to be wrapped in an element with the same id when children_only: true
+  # Oddly, it doesn't matter if the target element is a div! See: https://docs.stimulusreflex.com/appendices/troubleshooting#different-element-type-altogether-who-cares-so-long-as-the-css-selector-matches
+  # Used internally to allow automatic partial collection rendering, but also useful to library users
+  # eg. `morph dom_id(@posts), wrap(render(@posts), @posts)`
+  def wrap(content, resource)
+    tag.div(content.html_safe, id: dom_id(resource, hash: ""))
   end
 end

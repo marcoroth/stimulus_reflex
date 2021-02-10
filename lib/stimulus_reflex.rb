@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "action_cable"
+require "action_view"
 require "nokogiri"
 require "cable_ready"
 require "zeitwerk"
@@ -14,7 +15,7 @@ loader.eager_load
 module StimulusReflex
   class Engine < Rails::Engine
     initializer "stimulus_reflex.sanity_check" do
-      SanityChecker.check!
+      SanityChecker.check! unless Rails.env.production?
     end
   end
 end

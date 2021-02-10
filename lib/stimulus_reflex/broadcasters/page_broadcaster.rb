@@ -3,25 +3,27 @@
 module StimulusReflex
   class PageBroadcaster < Broadcaster
     def broadcast(selectors, data)
-      reflex.controller.process reflex.url_params[:action]
+      reflex.controller.process reflex.params[:action]
       page_html = reflex.controller.response.body
 
       return unless page_html.present?
 
-      document = Nokogiri::HTML(page_html)
+      document = Nokogiri::HTML.parse(page_html)
       selectors = selectors.select { |s| document.css(s).present? }
       selectors.each do |selector|
+        operations << [selector, :morph]
         html = document.css(selector).inner_html
-        cable_ready[stream_name].morph(
+        cable_ready.morph(
           selector: selector,
           html: html,
           children_only: true,
           permanent_attribute_name: permanent_attribute_name,
           stimulus_reflex: data.merge({
-            broadcaster: to_sym
+            morph: to_sym
           })
         )
       end
+
       cable_ready.broadcast
     end
 
@@ -31,6 +33,10 @@ module StimulusReflex
 
     def page?
       true
+    end
+
+    def to_s
+      "Page"
     end
   end
 end

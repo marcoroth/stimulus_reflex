@@ -6,7 +6,7 @@ description: Build reactive applications with the Rails tooling you already know
 
 ## What is StimulusReflex?
 
-**StimulusReflex is a new way to craft modern, reactive web interfaces with Ruby on Rails.**
+**A new way to craft modern, reactive web interfaces with Ruby on Rails.**
 
 We extend the capabilities of both [Rails](https://rubyonrails.org) and [Stimulus](https://stimulusjs.org) by intercepting user interactions and passing them to Rails over real-time websockets. These interactions are processed by _Reflex actions_ that change application state. The current page is quickly re-rendered and the changes are sent to the client using [CableReady](https://cableready.stimulusreflex.com). The page is then [morphed](https://github.com/patrick-steele-idem/morphdom) to reflect the new application state. This entire round-trip allows us to update the UI in 20-30ms without flicker or expensive page loads.
 
@@ -17,20 +17,6 @@ This architecture eliminates the complexity imposed by full-stack frontend frame
 
 [![GitHub stars](https://img.shields.io/github/stars/hopsoft/stimulus_reflex?style=social)](https://github.com/hopsoft/stimulus_reflex) [![GitHub forks](https://img.shields.io/github/forks/hopsoft/stimulus_reflex?style=social)](https://github.com/hopsoft/stimulus_reflex) [![Twitter follow](https://img.shields.io/twitter/follow/hopsoft?style=social)](https://twitter.com/hopsoft)
 {% endhint %}
-
-## Introducing: Morphs
-
-v3.3 introduces the concept of **Morphs** to StimulusReflex.
-
-{% embed url="https://www.youtube.com/watch?v=utxCm3uLhIE" caption="" %}
-
-**Selector** morphs allow you to intelligently update target elements in your DOM, provided by regenerated partials and ViewComponents.
-
-**Nothing** morphs provide a lightning-fast RPC mechanism to launch ActiveJobs and emit signals to external processes.
-
-There's a [handy chart](https://app.lucidchart.com/documents/view/e83d2cac-d2b1-4a05-8a2f-d55ea5e40bc9/0_0) showing how Morphs work. Find all of the documentation and examples behind the link below.
-
-{% page-ref page="morph-modes.md" %}
 
 ## Why should I use StimulusReflex?
 
@@ -43,9 +29,15 @@ Wouldn't it be great if you could **focus on your product** instead of the techn
 * [x] Facilitate simple, concise, and clear code 🤸
 * [x] Integrate seamlessly with Ruby on Rails 🚝
 
+## New Release: v3.4 - Developer Happiness Edition
+
+![](.gitbook/assets/kittens.jpg)
+
+Find out more and learn how to upgrade on the [Release History](appendices/release-history.md) page.
+
 ## Faster UIs, smaller downloads and longer battery life
 
-Our over-the-wire JavaScript payload size is a tiny **40kb** gzipped... and that _includes_ Stimulus, ActionCable, StimulusReflex and CableReady.
+Our over-the-wire JavaScript payload size is a tiny [**11.4kb** gzipped](https://bundlephobia.com/result?p=stimulus_reflex@3.4.0)... and that _includes_ StimulusReflex, ActionCable, morphdom and CableReady.
 
 While StimulusReflex is a radically different approach that makes it hard to do a direct comparison to the popular SPA frameworks, the one thing everyone seems to agree on is how small their Todo List implementation is. Here's the numbers:
 
@@ -67,6 +59,8 @@ Some of our favorite demos include:
 
 * [Tabular](https://expo.stimulusreflex.com/demos/tabular): filtering, sorting and pagination without any client JavaScript
 * [Todo](https://expo.stimulusreflex.com/demos/todo): our take on the [classic](http://todomvc.com/), with a wire size 2-15x smaller than every other solution
+
+Another excellent demo is [BoxDrop](https://www.boxdrop.io/).
 
 ## Build the next Twitter in just 9 minutes \(or less\) 😉
 

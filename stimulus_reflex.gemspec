@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require File.expand_path("../lib/stimulus_reflex/version", __FILE__)
 
 Gem::Specification.new do |gem|
@@ -23,15 +25,15 @@ Gem::Specification.new do |gem|
     "source_code_uri" => gem.homepage
   }
 
-  gem.files = Dir["lib/**/*", "bin/*", "[A-Z]*"]
+  gem.files = Dir["app/**/*", "lib/**/*", "bin/*", "[A-Z]*"]
   gem.test_files = Dir["test/**/*.rb"]
 
   gem.add_dependency "rack"
   gem.add_dependency "nokogiri"
   gem.add_dependency "rails", ">= 5.2"
-  gem.add_dependency "cable_ready", ">= 4.3.0"
   gem.add_dependency "redis"
   gem.add_dependency "zeitwerk", ">= 2.3.0"
+  gem.add_dependency "cable_ready", ">= 4.5"
 
   gem.add_development_dependency "bundler", "~> 2.0"
   gem.add_development_dependency "pry-nav"

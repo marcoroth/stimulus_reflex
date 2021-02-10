@@ -6,26 +6,31 @@ module StimulusReflex
       morphs.each do |morph|
         selectors, html = morph
         updates = selectors.is_a?(Hash) ? selectors : Hash[selectors, html]
-        updates.each do |selector, html|
-          html = html.to_s
-          fragment = Nokogiri::HTML.fragment(html)
+        updates.each do |key, value|
+          html = reflex.render(key) if key.is_a?(ActiveRecord::Base) && value.nil?
+          html = reflex.wrap(reflex.render(key), key) if key.is_a?(ActiveRecord::Relation) && value.nil?
+          fragment = Nokogiri::HTML.fragment(html&.to_s || "")
+
+          selector = key.is_a?(ActiveRecord::Base) || key.is_a?(ActiveRecord::Relation) ? reflex.dom_id(key) : key
           match = fragment.at_css(selector)
           if match.present?
-            cable_ready[stream_name].morph(
+            operations << [selector, :morph]
+            cable_ready.morph(
               selector: selector,
               html: match.inner_html,
               children_only: true,
               permanent_attribute_name: permanent_attribute_name,
               stimulus_reflex: data.merge({
-                broadcaster: to_sym
+                morph: to_sym
               })
             )
           else
-            cable_ready[stream_name].inner_html(
+            operations << [selector, :inner_html]
+            cable_ready.inner_html(
               selector: selector,
               html: fragment.to_html,
               stimulus_reflex: data.merge({
-                broadcaster: to_sym
+                morph: to_sym
               })
             )
           end
@@ -40,12 +45,20 @@ module StimulusReflex
       @morphs ||= []
     end
 
+    def append_morph(selectors, html)
+      morphs << [selectors, html]
+    end
+
     def to_sym
       :selector
     end
 
     def selector?
       true
+    end
+
+    def to_s
+      "Selector"
     end
   end
 end
