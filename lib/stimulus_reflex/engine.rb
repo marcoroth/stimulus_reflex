@@ -3,7 +3,7 @@ module StimulusReflex
     isolate_namespace StimulusReflex
 
     initializer "stimulus_reflex.sanity_check" do
-      SanityChecker.check! unless Rails.env.production?
+      SanityChecker.check! if Rails.env.development?
     end
   end
 end
