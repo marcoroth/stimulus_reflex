@@ -70,6 +70,10 @@ GEM
       minitest (>= 5.1)
       tzinfo (~> 2.0)
       zeitwerk (~> 2.3)
+    appraisal (2.3.0)
+      bundler
+      rake
+      thor (>= 0.14.0)
     ast (2.4.2)
     builder (3.2.4)
     cable_ready (4.5.0)
@@ -184,6 +188,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  appraisal
   bundler (~> 2.0)
   pry
   pry-nav
