@@ -1,5 +1,5 @@
 import reflexes from './reflexes'
-import { elementToXPath, XPathToArray } from './utils'
+import { elementToXPath, serializeForm, XPathToArray } from './utils'
 import Debug from './debug'
 // import Deprecate from './deprecate'
 
@@ -112,6 +112,9 @@ export const extractElementDataset = element => {
         case 'descendants':
           elements = [...elements, ...XPathToArray(`${xPath}/descendant::*`)]
           break
+        case 'form':
+          elements = [...elements, element.closest('form')]
+          break
         default:
           elements = [...elements, ...document.querySelectorAll(token)]
       }
@@ -121,7 +124,11 @@ export const extractElementDataset = element => {
   })
 
   return elements.reduce((acc, ele) => {
-    return { ...extractDataAttributes(ele), ...acc }
+    const isForm = ele.tagName.toLowerCase() === 'form'
+
+    const attributes = isForm ? serializeForm(ele) : extractDataAttributes(ele)
+
+    return { ...attributes, ...acc }
   }, {})
 }
 
