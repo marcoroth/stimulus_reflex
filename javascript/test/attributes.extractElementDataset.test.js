@@ -165,10 +165,7 @@ describe('extractElementDataset', () => {
     const actual = extractElementDataset(element)
     const expected = {
       'data-info': 'this is the inner one',
-      'data-infos': [
-        'this is the inner one',
-        'this is the outer one'
-      ],
+      'data-infos': ['this is the inner one', 'this is the outer one'],
       'data-reflex-dataset': 'combined'
     }
     assert.deepStrictEqual(actual, expected)
@@ -418,12 +415,7 @@ describe('extractElementDataset', () => {
       'data-controller': 'posts',
       'data-id': '1',
       'data-post-id': '1',
-      'data-post-ids': [
-        '1',
-        '2',
-        '3',
-        '4'
-      ],
+      'data-post-ids': ['1', '2', '3', '4'],
       'data-reflex-dataset': '.post'
     }
     assert.deepStrictEqual(actual, expected)
@@ -445,12 +437,7 @@ describe('extractElementDataset', () => {
     const expected = {
       'data-controller': 'posts',
       'data-post-id': '2',
-      'data-post-ids': [
-        '1',
-        '2',
-        '3',
-        '4'
-      ],
+      'data-post-ids': ['1', '2', '3', '4'],
       'data-reflex-dataset': '.post'
     }
     assert.deepStrictEqual(actual, expected)
@@ -472,12 +459,7 @@ describe('extractElementDataset', () => {
     const expected = {
       'data-controller': 'posts',
       'data-post-id': '1',
-      'data-post-ids': [
-        '1',
-        '2',
-        '3',
-        '4'
-      ],
+      'data-post-ids': ['1', '2', '3', '4'],
       'data-reflex-dataset': '.post'
     }
     assert.deepStrictEqual(actual, expected)

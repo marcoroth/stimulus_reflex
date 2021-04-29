@@ -128,24 +128,29 @@ export const extractElementDataset = element => {
     const elementAttributes = extractDataAttributes(element)
 
     Object.keys(elementAttributes).forEach(key => {
-      if (attributes[key]) {
-        const pluralKey = `${key}s`
+      const value = elementAttributes[key]
+      const pluralKey = `${key}s`
 
+      if (attributes[key]) {
         if (Array.isArray(attributes[key])) {
-          attributes[key].push(elementAttributes[key])
+          attributes[key].push(value)
         } else {
           if (attributes[pluralKey]) {
             if (Array.isArray(attributes[pluralKey])) {
-              attributes[pluralKey].push(elementAttributes[key])
+              attributes[pluralKey].push(value)
             } else {
-              attributes[pluralKey] = [attributes[pluralKey], attributes[key], elementAttributes[key]].flat()
+              attributes[pluralKey] = [
+                attributes[pluralKey],
+                attributes[key],
+                value
+              ]
             }
           } else {
-            attributes[pluralKey] = [attributes[key], elementAttributes[key]]
+            attributes[pluralKey] = [attributes[key], value]
           }
         }
       } else {
-        attributes[key] = elementAttributes[key]
+        attributes[key] = value
       }
     })
   })
