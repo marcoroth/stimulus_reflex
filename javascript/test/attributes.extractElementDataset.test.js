@@ -152,11 +152,11 @@ describe('extractElementDataset', () => {
     assert.deepStrictEqual(actual, expected)
   })
 
-  it('should returns dataset for element with overloaded data attributes', () => {
+  it('should return dataset for element with overloaded data attributes', () => {
     const dom = new JSDOM(
       `
-      <div data-info="this is the wrong one">
-        <a data-info="this is the right one" data-reflex-dataset="combined">Test</a>
+      <div data-info="this is the outer one">
+        <a data-info="this is the inner one" data-reflex-dataset="combined">Test</a>
       </div>
       `
     )
@@ -164,7 +164,11 @@ describe('extractElementDataset', () => {
     const element = dom.window.document.querySelector('a')
     const actual = extractElementDataset(element)
     const expected = {
-      'data-info': 'this is the right one',
+      'data-info': 'this is the inner one',
+      'data-infos': [
+        'this is the inner one',
+        'this is the outer one'
+      ],
       'data-reflex-dataset': 'combined'
     }
     assert.deepStrictEqual(actual, expected)
@@ -413,6 +417,12 @@ describe('extractElementDataset', () => {
       'data-controller': 'foo',
       'data-id': '1',
       'data-one-id': '1',
+      'data-one-ids': [
+        '1',
+        '2',
+        '3',
+        '4'
+      ],
       'data-reflex-dataset': '.post'
     }
     assert.deepStrictEqual(actual, expected)

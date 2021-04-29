@@ -122,9 +122,27 @@ export const extractElementDataset = element => {
     }
   })
 
-  return elements.reduce((acc, ele) => {
-    return { ...extractDataAttributes(ele), ...acc }
-  }, {})
+  let attributes = {}
+
+  elements.forEach(element => {
+    const elementAttributes = extractDataAttributes(element)
+
+    Object.keys(elementAttributes).forEach(key => {
+      if (attributes[key]) {
+        const pluralKey = `${key}s`
+
+        if (attributes[pluralKey]) {
+          attributes[pluralKey].push(elementAttributes[key])
+        } else {
+          attributes[pluralKey] = [attributes[key], elementAttributes[key]]
+        }
+      } else {
+        attributes[key] = elementAttributes[key]
+      }
+    })
+  })
+
+  return attributes
 }
 
 // Extracts all data attributes from a DOM element.
