@@ -131,10 +131,18 @@ export const extractElementDataset = element => {
       if (attributes[key]) {
         const pluralKey = `${key}s`
 
-        if (attributes[pluralKey]) {
-          attributes[pluralKey].push(elementAttributes[key])
+        if (Array.isArray(attributes[key])) {
+          attributes[key].push(elementAttributes[key])
         } else {
-          attributes[pluralKey] = [attributes[key], elementAttributes[key]]
+          if (attributes[pluralKey]) {
+            if (Array.isArray(attributes[pluralKey])) {
+              attributes[pluralKey].push(elementAttributes[key])
+            } else {
+              attributes[pluralKey] = [attributes[pluralKey], attributes[key], elementAttributes[key]].flat()
+            }
+          } else {
+            attributes[pluralKey] = [attributes[key], elementAttributes[key]]
+          }
         }
       } else {
         attributes[key] = elementAttributes[key]

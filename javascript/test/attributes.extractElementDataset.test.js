@@ -400,24 +400,79 @@ describe('extractElementDataset', () => {
     assert.deepStrictEqual(actual, expected)
   })
 
-  it('should return dataset for first occurence if the same data attribute appears twice', () => {
+  it('should return dataset for first occurence and stack data values if they overlap', () => {
     const dom = new JSDOM(
       `
-      <div id="element" data-controller="foo" data-id="1" data-reflex-dataset=".post"></div>
-      <div class="post" data-one-id="1"></div>
-      <div class="post" data-one-id="2"></div>
-      <div class="post" data-one-id="3"></div>
-      <div class="post" data-one-id="4"></div>
+      <div id="element" data-controller="posts" data-id="1" data-reflex-dataset=".post">
+        <div class="post" data-post-id="1"></div>
+        <div class="post" data-post-id="2"></div>
+        <div class="post" data-post-id="3"></div>
+        <div class="post" data-post-id="4"></div>
+      </div>
       `
     )
     global.document = dom.window.document
     const element = dom.window.document.querySelector('#element')
     const actual = extractElementDataset(element)
     const expected = {
-      'data-controller': 'foo',
+      'data-controller': 'posts',
       'data-id': '1',
-      'data-one-id': '1',
-      'data-one-ids': [
+      'data-post-id': '1',
+      'data-post-ids': [
+        '1',
+        '2',
+        '3',
+        '4'
+      ],
+      'data-reflex-dataset': '.post'
+    }
+    assert.deepStrictEqual(actual, expected)
+  })
+
+  it('should return dataset if the plural of overlapped value is also used', () => {
+    const dom = new JSDOM(
+      `
+      <div id="element" data-controller="posts" data-post-ids="1" data-reflex-dataset=".post">
+        <div class="post" data-post-id="2"></div>
+        <div class="post" data-post-id="3"></div>
+        <div class="post" data-post-id="4"></div>
+      </div>
+      `
+    )
+    global.document = dom.window.document
+    const element = dom.window.document.querySelector('#element')
+    const actual = extractElementDataset(element)
+    const expected = {
+      'data-controller': 'posts',
+      'data-post-id': '2',
+      'data-post-ids': [
+        '1',
+        '2',
+        '3',
+        '4'
+      ],
+      'data-reflex-dataset': '.post'
+    }
+    assert.deepStrictEqual(actual, expected)
+  })
+
+  it('should return dataset if the plural of overlapped value is also used but plural comes after first singular value', () => {
+    const dom = new JSDOM(
+      `
+      <div id="element" data-controller="posts" data-post-id="1" data-reflex-dataset=".post">
+        <div class="post" data-post-id="2"></div>
+        <div class="post" data-post-id="3"></div>
+        <div class="post" data-post-ids="4"></div>
+      </div>
+      `
+    )
+    global.document = dom.window.document
+    const element = dom.window.document.querySelector('#element')
+    const actual = extractElementDataset(element)
+    const expected = {
+      'data-controller': 'posts',
+      'data-post-id': '1',
+      'data-post-ids': [
         '1',
         '2',
         '3',
