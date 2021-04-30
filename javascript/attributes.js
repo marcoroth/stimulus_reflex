@@ -2,6 +2,7 @@ import reflexes from './reflexes'
 import { elementToXPath, XPathToArray } from './utils'
 import Debug from './debug'
 import Deprecate from './deprecate'
+import pluralize from 'pluralize'
 
 const multipleInstances = element => {
   if (['checkbox', 'radio'].includes(element.type)) {
@@ -152,7 +153,7 @@ export const extractElementDataset = element => {
 
     Object.keys(elementAttributes).forEach(key => {
       const value = elementAttributes[key]
-      const pluralKey = `${key}s`
+      const pluralKey = pluralize(key)
 
       if (
         datasetArrayAttribtues[pluralKey] &&

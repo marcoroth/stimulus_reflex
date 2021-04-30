@@ -41,7 +41,8 @@
   },
   "dependencies": {
     "@rails/actioncable": ">= 6.0",
-    "cable_ready": ">= 4.5.0"
+    "cable_ready": ">= 4.5.0",
+    "pluralize": "^8.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.6.2",

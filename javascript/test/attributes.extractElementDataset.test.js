@@ -467,7 +467,6 @@ describe('extractElementDataset', () => {
       'data-controllers': ['posts'],
       'data-post-id': '2',
       'data-post-ids': ['1', '2', '3', '4'],
-      'data-post-idss': ['1'],
       'data-reflex-dataset': '.post',
       'data-reflex-datasets': ['.post'],
       'data-reflex-dataset-array': '.post',
@@ -494,7 +493,6 @@ describe('extractElementDataset', () => {
       'data-controllers': ['posts'],
       'data-post-id': '1',
       'data-post-ids': ['1', '2', '3', '4'],
-      'data-post-idss': ['2', '3'],
       'data-reflex-dataset': '.post',
       'data-reflex-datasets': ['.post'],
       'data-reflex-dataset-array': '.post',
@@ -521,9 +519,63 @@ describe('extractElementDataset', () => {
       'data-controllers': ['posts'],
       'data-post-id': '1',
       'data-post-ids': ['1', '2', '3', '4'],
-      'data-post-idss': ['4'],
       'data-reflex-dataset': '.post',
       'data-reflex-datasets': ['.post'],
+      'data-reflex-dataset-array': '.post',
+      'data-reflex-dataset-arrays': ['.post']
+    }
+    assert.deepStrictEqual(actual, expected)
+  })
+
+  it('should return dataset with correctly pluralized attributes', () => {
+    const dom = new JSDOM(
+      `
+      <div id="element" data-reflex-dataset-array=".post">
+        <div class="post" data-cat="1"></div><div class="post" data-cat="2"></div>
+        <div class="post" data-reflex="click"></div><div class="post" data-reflex="mousedown"></div>
+        <div class="post" data-library="1"></div><div class="post" data-library="2"></div>
+        <div class="post" data-truss="1"></div><div class="post" data-truss="2"></div>
+        <div class="post" data-bus="1"></div><div class="post" data-bus="2"></div>
+        <div class="post" data-marsh="1"></div><div class="post" data-marsh="2"></div>
+        <div class="post" data-lunch="1"></div><div class="post" data-lunch="2"></div>
+        <div class="post" data-blitz="1"></div><div class="post" data-blitz="2"></div>
+        <div class="post" data-fez="1"></div><div class="post" data-fez="2"></div>
+        <div class="post" data-wolf="1"></div><div class="post" data-wolf="2"></div>
+        <div class="post" data-chief="1"></div><div class="post" data-chief="2"></div>
+        <div class="post" data-cactus="1"></div><div class="post" data-cactus="2"></div>
+        <div class="post" data-ellipsis="1"></div><div class="post" data-ellipsis="2"></div>
+        <div class="post" data-criterion="1"></div><div class="post" data-criterion="2"></div>
+        <div class="post" data-sheep="1"></div><div class="post" data-sheep="2"></div>
+        <div class="post" data-child="1"></div><div class="post" data-child="2"></div>
+        <div class="post" data-woman="1"></div><div class="post" data-woman="2"></div>
+        <div class="post" data-man="1"></div><div class="post" data-man="2"></div>
+        <div class="post" data-mouse="1"></div><div class="post" data-mouse="2"></div>
+      </div>
+      `
+    )
+    global.document = dom.window.document
+    const element = dom.window.document.querySelector('#element')
+    const actual = extractElementDataset(element)
+    const expected = {
+      'data-cats': ['1', '2'],
+      'data-reflexes': ['click', 'mousedown'],
+      'data-libraries': ['1', '2'],
+      'data-trusses': ['1', '2'],
+      'data-buses': ['1', '2'],
+      'data-marshes': ['1', '2'],
+      'data-lunches': ['1', '2'],
+      'data-blitzs': ['1', '2'],
+      'data-fezs': ['1', '2'],
+      'data-wolves': ['1', '2'],
+      'data-chiefs': ['1', '2'],
+      'data-cacti': ['1', '2'],
+      'data-ellipses': ['1', '2'],
+      'data-criteria': ['1', '2'],
+      'data-sheep': ['1', '2'],
+      'data-children': ['1', '2'],
+      'data-women': ['1', '2'],
+      'data-men': ['1', '2'],
+      'data-mice': ['1', '2'],
       'data-reflex-dataset-array': '.post',
       'data-reflex-dataset-arrays': ['.post']
     }
