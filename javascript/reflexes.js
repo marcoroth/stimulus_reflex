@@ -137,20 +137,33 @@ const setupDeclarativeReflexes = debounce(() => {
         reflexName,
         allReflexControllers(reflexes.app, element)
       )
-      let action
+
+      const splits = reflexName.split('->')
+      const actionParts = []
+
+      if (splits.length == 2) {
+        actionParts.push(splits[0], "->")
+      }
+
       if (controller) {
-        action = `${reflexName.split('->')[0]}->${
-          controller.identifier
-        }#__perform`
-        if (!actions.includes(action)) actions.push(action)
+        actionParts.push(controller.identifier)
       } else {
-        action = `${reflexName.split('->')[0]}->stimulus-reflex#__perform`
+        actionParts.push("stimulus-reflex")
+
         if (!controllers.includes('stimulus-reflex')) {
           controllers.push('stimulus-reflex')
         }
-        if (!actions.includes(action)) actions.push(action)
+      }
+
+      actionParts.push("#", "__perform")
+
+      const action = actionParts.join("")
+
+      if (!actions.includes(action)) {
+        actions.push(action)
       }
     })
+
     const controllerValue = attributeValue(controllers)
     const actionValue = attributeValue(actions)
     if (

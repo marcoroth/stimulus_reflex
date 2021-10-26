@@ -231,14 +231,28 @@ const register = (controller, options = {}) => {
         if (!reflex || !reflex.trim().length) element = element.parentElement
       }
 
-      const match = attributeValues(reflex).find(
-        reflex => reflex.split('->')[0] === event.type
-      )
+      let match
+      const reflexActions = attributeValues(reflex)
+
+      if (reflexActions.length >= 2) {
+        match = reflexActions.find(reflex => reflex.split('->')[0] === event.type)
+
+        if (!match) {
+          match = reflexActions.find(reflex => reflex.split('->').length === 1)
+        }
+      } else {
+        match = reflexActions[0]
+      }
 
       if (match) {
+        const splits = match.split('->')
+        const reflexAction = (splits.length == 2) ? splits[1] : splits[0]
+
         event.preventDefault()
         event.stopPropagation()
-        this.stimulate(match.split('->')[1], element)
+        this.stimulate(reflexAction, element)
+      } else {
+        console.warn(`StimulusReflex couldn't figure out what to call based on your `data-reflex` attribute declration. Found: ${reflex}`)
       }
     }
   })
