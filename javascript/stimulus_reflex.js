@@ -252,7 +252,7 @@ const register = (controller, options = {}) => {
         event.stopPropagation()
         this.stimulate(reflexAction, element)
       } else {
-        console.warn(`StimulusReflex couldn't figure out what to call based on your `data-reflex` attribute declration. Found: ${reflex}`)
+        console.warn(`StimulusReflex couldn't figure out what to call based on your 'data-reflex' attribute declration. Found: ${reflex}`)
       }
     }
   })
