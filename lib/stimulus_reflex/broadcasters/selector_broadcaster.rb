@@ -14,6 +14,7 @@ module StimulusReflex
             cable_ready.send StimulusReflex.config.morph_operation, {
               selector: update.selector,
               html: match.inner_html,
+              outer_html: match.outer_html,
               payload: payload,
               children_only: true,
               permanent_attribute_name: permanent_attribute_name,
@@ -24,6 +25,7 @@ module StimulusReflex
             cable_ready.send StimulusReflex.config.replace_operation, {
               selector: update.selector,
               html: fragment.inner_html,
+              outer_html: fragment.outer_html,
               payload: payload,
               stimulus_reflex: data.merge(morph: to_sym)
             }

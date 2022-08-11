@@ -8,13 +8,13 @@ module StimulusReflex
 
       return if fragment.empty?
 
-      selectors = selectors.select { |s| fragment.match(s).present? }
-      selectors.each do |selector|
+      selectors = selectors.map { |s| [s, fragment.match(s)] }.filter { |s, f| f.present? }
+      selectors.each do |selector, selector_fragment|
         operations << [selector, StimulusReflex.config.morph_operation]
-        html = fragment.match(selector).inner_html
         cable_ready.send StimulusReflex.config.morph_operation, {
           selector: selector,
-          html: html,
+          html: selector_fragment.inner_html,
+          outer_html: selector_fragment.outer_html,
           payload: payload,
           children_only: true,
           permanent_attribute_name: permanent_attribute_name,
