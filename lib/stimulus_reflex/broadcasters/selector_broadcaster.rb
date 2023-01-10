@@ -7,7 +7,7 @@ module StimulusReflex
         selectors, html = morph
         updates = create_update_collection(selectors, html)
         updates.each do |update|
-          document = StimulusReflex::HTML::Document.new(update.html)
+          document = StimulusReflex::HTML::DocumentFragment.new(update.html)
           match = document.match(update.selector)
           if match.present?
             operations << [update.selector, StimulusReflex.config.morph_operation]
@@ -23,6 +23,7 @@ module StimulusReflex
             operations << [update.selector, StimulusReflex.config.replace_operation]
             cable_ready.send StimulusReflex.config.replace_operation, {
               selector: update.selector,
+              # html: document.inner_html,
               html: update.html.to_s,
               payload: payload,
               stimulus_reflex: data.merge(morph: to_sym)

@@ -170,25 +170,25 @@ class StimulusReflex::HTML::DocumentTest < ActiveSupport::TestCase
 
   test "should properly handle a tr without the parent table" do
     html = "<tr><td>1</td><td>2</td></tr>"
-    document = StimulusReflex::HTML::Document.new(html)
-    assert_equal html, document.to_html
+    document = StimulusReflex::HTML::DocumentFragment.new(html)
+    assert_equal html, document.to_html.squish
   end
 
   test "should properly handle a td without the parent table or td" do
     html = "<td>1</td>"
-    document = StimulusReflex::HTML::Document.new(html)
-    assert_equal html, document.to_html
+    document = StimulusReflex::HTML::DocumentFragment.new(html)
+    assert_equal html, document.to_html.squish
   end
 
   test "should properly return inner html of a complex tr when parsed as a document fragment" do
-    html = '<tr data-foo="1" id=123 class="abc"><td>1</td><td>2</td></tr>'
-    document = StimulusReflex::HTML::Document.new(html)
-    assert_equal "<td>1</td><td>2</td>", document.inner_html
+    html = '<tr data-foo="1" id="123" class="abc"><td>1</td><td>2</td></tr>'
+    document = StimulusReflex::HTML::DocumentFragment.new(html)
+    assert_equal "<td>1</td><td>2</td>", document.inner_html.squish
   end
 
   test "should properly return inner html of a td when parsed as a document fragment" do
     html = "<td>1</td>"
-    document = StimulusReflex::HTML::Document.new(html)
-    assert_equal "1", document.inner_html
+    document = StimulusReflex::HTML::DocumentFragment.new(html)
+    assert_equal "1", document.inner_html.squish
   end
 end
